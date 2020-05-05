@@ -1,6 +1,7 @@
-import { Controller, Get, Put, Param, Body, Delete, Post } from "@nestjs/common";
+import { Controller, Get, Put, Param, Body, Delete, Post, UseFilters } from "@nestjs/common";
 import { Course } from '../../../../shared/course';
 import { CoursesRepository } from "../repositories/courses.repository";
+import { HttpExceptionFilter } from "../../../src/filters/http.filter";
 
 @Controller('courses')
 export class CoursesController {
@@ -18,8 +19,8 @@ export class CoursesController {
     }
 
     @Put(':courseId')
+    @UseFilters(new HttpExceptionFilter())
     async updateCourse(@Param('courseId') courseId: string, @Body() changes: Partial<Course>): Promise<Course> {
-        console.log('update course');
         return this.coursedb.updateCourse(courseId, changes);
     }
 
