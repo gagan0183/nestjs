@@ -13,9 +13,6 @@ export class CoursesRepository {
     }
 
     async updateCourse(courseId: string, changes: Partial<Course>) : Promise<Course> {
-        if (changes._id) {
-            throw new BadRequestException('id cannot be updated');
-        }
         return this.courseModel.findOneAndUpdate({ _id: courseId }, changes, { new: true });
     }
 

@@ -1,7 +1,8 @@
-import { Controller, Get, Put, Param, Body, Delete, Post, UseFilters } from "@nestjs/common";
+import { Controller, Get, Put, Param, Body, Delete, Post, UseFilters, BadRequestException } from "@nestjs/common";
 import { Course } from '../../../../shared/course';
 import { CoursesRepository } from "../repositories/courses.repository";
 import { HttpExceptionFilter } from "../../../src/filters/http.filter";
+import { IntegerPipe } from "../../../src/pipes/integer.pipe";
 
 @Controller('courses')
 export class CoursesController {
@@ -20,7 +21,12 @@ export class CoursesController {
 
     @Put(':courseId')
     @UseFilters(new HttpExceptionFilter())
-    async updateCourse(@Param('courseId') courseId: string, @Body() changes: Partial<Course>): Promise<Course> {
+    async updateCourse(@Param('courseId') courseId: string, @Body("seqNo", IntegerPipe) seqNo: number, @Body() changes: Partial<Course>): Promise<Course> {
+        console.log('seqNo', seqNo);
+        console.log('type', typeof seqNo);
+        if (changes._id) {
+            throw new BadRequestException('id cannot be updated');
+        }
         return this.coursedb.updateCourse(courseId, changes);
     }
 
